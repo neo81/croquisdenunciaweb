@@ -1,0 +1,119 @@
+<div class="page-root">
+  
+  <section class="section header-section">
+    <div class="header-inner">
+      <h1 class="title">Reporte de Siniestro</h1>
+      
+      <div class="form-grid">
+        <label>Tipo accidente
+          <select class="custom-select" [(ngModel)]="form.tipoAccidente">
+            <option value="">Seleccione</option>
+            <option *ngFor="let item of accidentesApi" [value]="item.COD_T_ACCIDENTE">{{ item.X_ACCIDENTE }}</option>
+          </select>
+        </label>
+        
+        <label>Lugar Siniestro
+          <select class="custom-select" [(ngModel)]="form.tipoLugarSiniestro">
+            <option value="">Seleccione</option>
+            <option value="Calle">Calle</option>
+            <option value="Ruta">Ruta</option>
+          </select>
+        </label>
+
+        <label>Tipo Lugar
+          <select class="custom-select" [(ngModel)]="form.tipoLugar">
+            <option value="">Seleccione</option>
+            <option value="Cruce">Cruce</option>
+            <option value="Rotonda">Rotonda</option>
+          </select>
+        </label>
+
+        <label>Tipo colisión
+          <select class="custom-select" [(ngModel)]="form.tipoColision">
+            <option value="">Seleccione</option>
+            <option value="Choque">Choque</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="controls header-controls">
+        <div class="bg-control-group">
+          <label class="bg-label">Fondo:</label>
+          <select class="custom-select bg-select" [(ngModel)]="selectedBackground" (ngModelChange)="onSelectBackground($event)">
+            <option value="">Blanco</option>
+            <option *ngFor="let bg of backgrounds" [value]="bg">{{bg}}</option>
+          </select>
+        </div>
+        
+        <div class="control-buttons">
+          <div class="tool-group">
+            <input type="color" [(ngModel)]="strokeColor" class="color-picker-round">
+            <button (click)="toggleDrawingMode()" class="btn-standard" [class.btn-active]="isDrawingMode">Dibujar</button>
+            <button (click)="addText()" class="btn-standard btn-info">Texto</button>
+          </div>
+
+          <div class="tool-group">
+            <button (click)="flipHorizontal()" class="btn-standard" [disabled]="!selectedNode">Flip H</button>
+            <button (click)="flipVertical()" class="btn-standard" [disabled]="!selectedNode">Flip V</button>
+            <button (click)="duplicateSelected()" class="btn-standard" [disabled]="!selectedNode">Duplicar</button>
+            <button (click)="bringToFront()" class="btn-standard" [disabled]="!selectedNode">Frente</button>
+          </div>
+
+          <div class="tool-group">
+            <button (click)="clearCanvas()" class="btn-standard btn-danger">Limpiar</button>
+            <button (click)="saveCroquis()" class="btn-standard btn-success">Guardar JSON</button>
+            <button (click)="loadCroquis()" class="btn-standard btn-warning">Cargar JSON</button>
+            <button (click)="exportImage()" class="btn-standard">Imagen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section main-section">
+    <aside class="sidebar">
+      <h4 class="sidebar-title">Iconos Izq</h4>
+      <div class="icons-list">
+        <div class="icon-item" *ngFor="let icon of leftIconos">
+          <img [src]="'assets/iconos/' + icon" 
+               draggable="true" 
+               (dragstart)="onHtmlDragStart($event, icon)" 
+               (click)="onHtmlClickAdd(icon)">
+        </div>
+      </div>
+    </aside>
+
+    <div class="stage-area">
+      <div class="stage-wrapper" #stageWrapper [class.drawing-cursor]="isDrawingMode">
+        <div #stageContainer id="stage-container" 
+             (drop)="onDropToStage($event)" 
+             (dragover)="onDragOver($event)">
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <h4 class="sidebar-title">Iconos Der</h4>
+      <div class="icons-list">
+        <div class="icon-item" *ngFor="let icon of rightIconos">
+          <img [src]="'assets/iconos/' + icon" 
+               draggable="true" 
+               (dragstart)="onHtmlDragStart($event, icon)" 
+               (click)="onHtmlClickAdd(icon)">
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section footer-section">
+    <div class="textarea-container">
+      <label class="textarea-label">Descripción del accidente</label>
+      <textarea [(ngModel)]="form.descripcion" rows="3"></textarea>
+    </div>
+    
+    <div class="textarea-container" style="margin-top: 10px;">
+      <label class="textarea-label">Datos JSON (Pegar aquí para cargar o copiar para guardar)</label>
+      <textarea [(ngModel)]="savedJson" rows="3"></textarea>
+    </div>
+  </section>
+</div>
