@@ -8,7 +8,6 @@ interface AccidenteOption {
   X_ACCIDENTE: string;
 }
 
-// Nueva interfaz para manejar los nombres descriptivos de los fondos
 interface BackgroundOption {
   file: string;
   label: string;
@@ -44,7 +43,6 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   public leftIconos: string[] = ['icono1.png', 'icono2.png'];
   public rightIconos: string[] = ['icono3.png', 'icono4.png'];
 
-  // Actualizamos el array de strings a un array de objetos con etiquetas amigables
   public backgrounds: BackgroundOption[] = [
     { file: 'foto1.jpg', label: 'Cruce' },
     { file: 'foto2.jpg', label: 'Diagonal' },
@@ -52,7 +50,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   ];
   
   public form = { tipoAccidente: '', tipoLugarSiniestro: '', tipoLugar: '', tipoColision: '', descripcion: '' };
-  public selectedBackground: string = ''; // Aquí se guardará el nombre del archivo (ej: 'foto1.jpg')
+  public selectedBackground: string = '';
   public savedJson: string = '';
 
   private readonly BASE_WIDTH = 1280;
@@ -64,10 +62,6 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  /**
-   * Ciclo de vida: Inicialización.
-   * Cargamos los datos de la API al arrancar.
-   */
   ngOnInit(): void {
     this.cargarTiposAccidente();
   }
@@ -113,10 +107,14 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.stage.on('mousemove touchmove', (e: any) => this.handleMouseMove(e));
     this.stage.on('mouseup touchend', () => this.handleMouseUp());
 
-    this.layer.on('click tap', (e: any) => {
+    this.stage.on('click tap', (e: any) => {
       if (this.isDrawingMode) return;
       const target = e.target;
-      if (target !== this.stage && target !== this.backgroundImageNode && target !== this.transformer) {
+      if (target === this.stage || target === this.backgroundImageNode) {
+        this.selectNode(null);
+        return;
+      }
+      if (target.hasName('canvas-icon')) {
         this.selectNode(target);
       }
     });
@@ -177,21 +175,14 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       this.stage.on('mousedown touchstart', (e: any) => this.handleMouseDown(e));
       this.stage.on('mousemove touchmove', (e: any) => this.handleMouseMove(e));
       this.stage.on('mouseup touchend', () => this.handleMouseUp());
-      this.layer.on('click tap', (e: any) => {
-        if (this.isDrawingMode) return;
-        const target = e.target;
-        if (target !== this.stage && target !== this.transformer) this.selectNode(target);
-      });
+      
       this.fitStageToWrapper();
       this.stage.batchDraw();
     } catch (e) { alert("Error al cargar JSON."); }
   }
 
   private handleMouseDown(e: any) {
-    if (!this.isDrawingMode) {
-      if (e.target === this.stage || e.target === this.backgroundImageNode) this.selectNode(null);
-      return;
-    }
+    if (!this.isDrawingMode) return;
     this.isPaint = true;
     const pos = this.stage.getPointerPosition();
     const transform = this.stage.getAbsoluteTransform().copy().invert();
@@ -216,31 +207,29 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   private handleMouseUp() { if (this.isPaint) { this.isPaint = false; this.isDrawingMode = false; this.selectNode(this.lastLine); } }
 
   public selectNode(node: any | null) {
-    if (node && (node.getType() === 'Stage' || node.hasName('transformer'))) {
+    if (!node) {
       this.selectedNode = null;
       this.transformer.nodes([]);
     } else {
       this.selectedNode = node;
-      this.transformer.nodes(node ? [node] : []);
+      this.transformer.nodes([node]);
+      this.transformer.moveToTop();
     }
     this.layer.draw();
   }
 
-  /**
-   * Cambia la imagen de fondo.
-   * @param fileName Nombre del archivo de imagen (ej: 'foto1.jpg')
-   */
   public onSelectBackground(fileName: string) {
     if (!this.isBrowser || !this.Konva) return;
     if (!fileName) { 
-      if (this.backgroundImageNode) { this.backgroundImageNode.destroy(); this.backgroundImageNode = null; this.backgroundLayer.draw(); } 
+      if (this.backgroundImageNode) { this.backgroundImageNode.destroy(); this.backgroundImageNode = null; }
+      this.backgroundLayer.draw();
       return; 
     }
     const img = new Image();
     img.src = `assets/backgrounds/${fileName}`;
     img.onload = () => {
       if (this.backgroundImageNode) this.backgroundImageNode.destroy();
-      this.backgroundImageNode = new this.Konva.Image({ x: 0, y: 0, image: img, width: this.BASE_WIDTH, height: this.BASE_HEIGHT, listening: false, src: img.src });
+      this.backgroundImageNode = new this.Konva.Image({ x: 0, y: 0, image: img, width: this.BASE_WIDTH, height: this.BASE_HEIGHT, listening: true, src: img.src });
       this.backgroundLayer.add(this.backgroundImageNode);
       this.backgroundLayer.batchDraw();
     };
@@ -266,6 +255,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     const logicPos = transform.point(pos);
     this.addIcon(icon, logicPos.x, logicPos.y);
   }
+
   public onHtmlClickAdd(icon: string) { this.addIcon(icon, this.BASE_WIDTH / 2, this.BASE_HEIGHT / 2); }
   private addIcon(iconFile: string, x: number, y: number) {
     const img = new Image();

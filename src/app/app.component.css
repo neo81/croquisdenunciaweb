@@ -15,21 +15,11 @@
 .tool-group { display: flex; align-items: center; gap: 4px; }
 
 .btn-standard { 
-  height: 32px; 
-  padding: 0 10px; 
-  border-radius: 4px; 
-  border: 1px solid #ccc; 
-  cursor: pointer; 
-  font-size: 11px; 
-  background: #f8f9fa;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
+  height: 32px; padding: 0 10px; border-radius: 4px; border: 1px solid #ccc; 
+  cursor: pointer; font-size: 11px; background: #f8f9fa; display: inline-flex; align-items: center; justify-content: center;
 }
 .btn-standard:hover { background: #e2e6ea; }
 .btn-standard:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .btn-active { background: #fd7e14 !important; color: #fff; border-color: #d9480f; }
 .btn-success { background: #28a745; color: #fff; border-color: #218838; }
 .btn-danger { background: #dc3545; color: #fff; border-color: #bd2130; }
@@ -37,17 +27,8 @@
 .btn-warning { background: #ffc107; border-color: #e0a800; }
 
 .color-picker-round { 
-  width: 24px; 
-  height: 24px; 
-  padding: 0; 
-  border: 1px solid #ccc; 
-  cursor: pointer; 
-  background: none;
-  border-radius: 50%;
-  overflow: hidden;
-  appearance: none;
-  -webkit-appearance: none;
-  box-sizing: border-box;
+  width: 24px; height: 24px; padding: 0; border: 1px solid #ccc; cursor: pointer; 
+  background: none; border-radius: 50%; overflow: hidden; appearance: none; -webkit-appearance: none;
 }
 .color-picker-round::-webkit-color-swatch-wrapper { padding: 0; }
 .color-picker-round::-webkit-color-swatch { border: none; border-radius: 50%; }
