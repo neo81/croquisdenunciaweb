@@ -8,6 +8,12 @@ interface AccidenteOption {
   X_ACCIDENTE: string;
 }
 
+// Nueva interfaz para manejar los nombres descriptivos de los fondos
+interface BackgroundOption {
+  file: string;
+  label: string;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -37,10 +43,16 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   public selectedNode: any = null;
   public leftIconos: string[] = ['icono1.png', 'icono2.png'];
   public rightIconos: string[] = ['icono3.png', 'icono4.png'];
-  public backgrounds: string[] = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg'];
+
+  // Actualizamos el array de strings a un array de objetos con etiquetas amigables
+  public backgrounds: BackgroundOption[] = [
+    { file: 'foto1.jpg', label: 'Cruce' },
+    { file: 'foto2.jpg', label: 'Diagonal' },
+    { file: 'foto3.jpg', label: 'Rotonda' }
+  ];
   
   public form = { tipoAccidente: '', tipoLugarSiniestro: '', tipoLugar: '', tipoColision: '', descripcion: '' };
-  public selectedBackground: string = '';
+  public selectedBackground: string = ''; // Aquí se guardará el nombre del archivo (ej: 'foto1.jpg')
   public savedJson: string = '';
 
   private readonly BASE_WIDTH = 1280;
@@ -52,6 +64,10 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
+  /**
+   * Ciclo de vida: Inicialización.
+   * Cargamos los datos de la API al arrancar.
+   */
   ngOnInit(): void {
     this.cargarTiposAccidente();
   }
@@ -130,15 +146,9 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.selectNode(textNode);
   }
 
-  /**
-   * ACTIVA/DESACTIVA el modo dibujo.
-   * Cuando está activo, deseleccionamos cualquier objeto para no moverlo mientras pintamos.
-   */
   public toggleDrawingMode() {
     this.isDrawingMode = !this.isDrawingMode;
-    if (this.isDrawingMode) {
-      this.selectNode(null);
-    }
+    if (this.isDrawingMode) this.selectNode(null);
   }
 
   public loadCroquis() {
@@ -216,11 +226,18 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.layer.draw();
   }
 
-  public onSelectBackground(bg: string) {
+  /**
+   * Cambia la imagen de fondo.
+   * @param fileName Nombre del archivo de imagen (ej: 'foto1.jpg')
+   */
+  public onSelectBackground(fileName: string) {
     if (!this.isBrowser || !this.Konva) return;
-    if (!bg) { if (this.backgroundImageNode) { this.backgroundImageNode.destroy(); this.backgroundImageNode = null; this.backgroundLayer.draw(); } return; }
+    if (!fileName) { 
+      if (this.backgroundImageNode) { this.backgroundImageNode.destroy(); this.backgroundImageNode = null; this.backgroundLayer.draw(); } 
+      return; 
+    }
     const img = new Image();
-    img.src = `assets/backgrounds/${bg}`;
+    img.src = `assets/backgrounds/${fileName}`;
     img.onload = () => {
       if (this.backgroundImageNode) this.backgroundImageNode.destroy();
       this.backgroundImageNode = new this.Konva.Image({ x: 0, y: 0, image: img, width: this.BASE_WIDTH, height: this.BASE_HEIGHT, listening: false, src: img.src });

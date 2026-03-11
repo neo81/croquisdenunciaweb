@@ -41,7 +41,7 @@
           <label class="bg-label">Fondo:</label>
           <select class="custom-select bg-select" [(ngModel)]="selectedBackground" (ngModelChange)="onSelectBackground($event)">
             <option value="">Blanco</option>
-            <option *ngFor="let bg of backgrounds" [value]="bg">{{bg}}</option>
+            <option *ngFor="let bg of backgrounds" [value]="bg.file">{{ bg.label }}</option>
           </select>
         </div>
         
@@ -75,20 +75,14 @@
       <h4 class="sidebar-title">Iconos Izq</h4>
       <div class="icons-list">
         <div class="icon-item" *ngFor="let icon of leftIconos">
-          <img [src]="'assets/iconos/' + icon" 
-               draggable="true" 
-               (dragstart)="onHtmlDragStart($event, icon)" 
-               (click)="onHtmlClickAdd(icon)">
+          <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
         </div>
       </div>
     </aside>
 
     <div class="stage-area">
       <div class="stage-wrapper" #stageWrapper [class.drawing-cursor]="isDrawingMode">
-        <div #stageContainer id="stage-container" 
-             (drop)="onDropToStage($event)" 
-             (dragover)="onDragOver($event)">
-        </div>
+        <div #stageContainer id="stage-container" (drop)="onDropToStage($event)" (dragover)="onDragOver($event)"></div>
       </div>
     </div>
 
@@ -96,10 +90,7 @@
       <h4 class="sidebar-title">Iconos Der</h4>
       <div class="icons-list">
         <div class="icon-item" *ngFor="let icon of rightIconos">
-          <img [src]="'assets/iconos/' + icon" 
-               draggable="true" 
-               (dragstart)="onHtmlDragStart($event, icon)" 
-               (click)="onHtmlClickAdd(icon)">
+          <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
         </div>
       </div>
     </aside>
@@ -107,12 +98,11 @@
 
   <section class="section footer-section">
     <div class="textarea-container">
-      <label class="textarea-label">Descripción del accidente</label>
+      <label class="textarea-label">Descripción</label>
       <textarea [(ngModel)]="form.descripcion" rows="3"></textarea>
     </div>
-    
     <div class="textarea-container" style="margin-top: 10px;">
-      <label class="textarea-label">Datos JSON (Pegar aquí para cargar o copiar para guardar)</label>
+      <label class="textarea-label">JSON Data</label>
       <textarea [(ngModel)]="savedJson" rows="3"></textarea>
     </div>
   </section>
