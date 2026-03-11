@@ -46,9 +46,9 @@
         
         <div class="control-buttons">
           <div class="tool-group">
-            <input type="color" [(ngModel)]="strokeColor" class="color-picker-round">
-            <button (click)="toggleDrawingMode()" class="btn-standard" [class.btn-active]="isDrawingMode">Dibujar</button>
-            <button (click)="addText()" class="btn-standard btn-info">Texto</button>
+            <input type="color" [(ngModel)]="strokeColor" class="color-picker-round" [disabled]="!selectedBackground">
+            <button (click)="toggleDrawingMode()" class="btn-standard" [class.btn-active]="isDrawingMode" [disabled]="!selectedBackground">Dibujar</button>
+            <button (click)="addText()" class="btn-standard btn-info" [disabled]="!selectedBackground">Texto</button>
           </div>
 
           <div class="tool-group">
@@ -72,7 +72,7 @@
   <section class="section main-section">
     <aside class="sidebar">
       <h4 class="sidebar-title">Iconos Izq</h4>
-      <div class="icons-list">
+      <div class="icons-list" [class.disabled]="!selectedBackground">
         <div class="icon-item" *ngFor="let icon of leftIconos">
           <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
         </div>
@@ -80,14 +80,14 @@
     </aside>
 
     <div class="stage-area">
-      <div class="stage-wrapper" #stageWrapper [class.drawing-cursor]="isDrawingMode">
+      <div class="stage-wrapper" #stageWrapper [class.drawing-cursor]="isDrawingMode" [class.locked]="!selectedBackground">
         <div #stageContainer id="stage-container" (drop)="onDropToStage($event)" (dragover)="onDragOver($event)"></div>
       </div>
     </div>
 
     <aside class="sidebar">
       <h4 class="sidebar-title">Iconos Der</h4>
-      <div class="icons-list">
+      <div class="icons-list" [class.disabled]="!selectedBackground">
         <div class="icon-item" *ngFor="let icon of rightIconos">
           <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
         </div>

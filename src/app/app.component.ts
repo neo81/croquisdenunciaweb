@@ -90,6 +90,15 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
 
+  // --- VALIDACIÓN DE FONDO ---
+  private canInteract(): boolean {
+    if (!this.selectedBackground) {
+      alert("Por favor, seleccione un fondo antes de editar el canvas.");
+      return false;
+    }
+    return true;
+  }
+
   private initKonva() {
     this.stage = new this.Konva.Stage({
       container: this.stageContainer.nativeElement,
@@ -130,6 +139,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public addText() {
+    if (!this.canInteract()) return;
     const textNode = new this.Konva.Text({
       text: 'Escribe aquí...',
       x: 150, y: 150, fontSize: 30,
@@ -145,6 +155,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public toggleDrawingMode() {
+    if (!this.canInteract()) return;
     this.isDrawingMode = !this.isDrawingMode;
     if (this.isDrawingMode) this.selectNode(null);
   }
@@ -175,7 +186,6 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       this.stage.on('mousedown touchstart', (e: any) => this.handleMouseDown(e));
       this.stage.on('mousemove touchmove', (e: any) => this.handleMouseMove(e));
       this.stage.on('mouseup touchend', () => this.handleMouseUp());
-      
       this.fitStageToWrapper();
       this.stage.batchDraw();
     } catch (e) { alert("Error al cargar JSON."); }
@@ -247,6 +257,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   public onDragOver(evt: DragEvent) { evt.preventDefault(); }
   public onDropToStage(evt: DragEvent) {
     evt.preventDefault();
+    if (!this.canInteract()) return;
     const icon = evt.dataTransfer?.getData('text/plain');
     if (!icon) return;
     this.stage.setPointersPositions(evt);
@@ -256,7 +267,10 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.addIcon(icon, logicPos.x, logicPos.y);
   }
 
-  public onHtmlClickAdd(icon: string) { this.addIcon(icon, this.BASE_WIDTH / 2, this.BASE_HEIGHT / 2); }
+  public onHtmlClickAdd(icon: string) { 
+    if (!this.canInteract()) return;
+    this.addIcon(icon, this.BASE_WIDTH / 2, this.BASE_HEIGHT / 2); 
+  }
   private addIcon(iconFile: string, x: number, y: number) {
     const img = new Image();
     img.src = `assets/iconos/${iconFile}`;
