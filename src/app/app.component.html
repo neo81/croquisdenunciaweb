@@ -10,7 +10,6 @@
             <option *ngFor="let item of accidentesApi" [value]="item.COD_T_ACCIDENTE">{{ item.X_ACCIDENTE }}</option>
           </select>
         </label>
-        
         <label>Lugar Siniestro
           <select class="custom-select" [(ngModel)]="form.tipoLugarSiniestro">
             <option value="">Seleccione</option>
@@ -18,7 +17,6 @@
             <option value="Ruta">Ruta</option>
           </select>
         </label>
-
         <label>Tipo Lugar
           <select class="custom-select" [(ngModel)]="form.tipoLugar">
             <option value="">Seleccione</option>
@@ -26,7 +24,6 @@
             <option value="Rotonda">Rotonda</option>
           </select>
         </label>
-
         <label>Tipo colisión
           <select class="custom-select" [(ngModel)]="form.tipoColision">
             <option value="">Seleccione</option>
@@ -50,14 +47,12 @@
             <button (click)="toggleDrawingMode()" class="btn-standard" [class.btn-active]="isDrawingMode" [disabled]="!selectedBackground">Dibujar</button>
             <button (click)="addText()" class="btn-standard btn-info" [disabled]="!selectedBackground">Texto</button>
           </div>
-
           <div class="tool-group">
             <button (click)="flipHorizontal()" class="btn-standard" [disabled]="!selectedNode">Flip H</button>
             <button (click)="flipVertical()" class="btn-standard" [disabled]="!selectedNode">Flip V</button>
             <button (click)="duplicateSelected()" class="btn-standard" [disabled]="!selectedNode">Duplicar</button>
             <button (click)="bringToFront()" class="btn-standard" [disabled]="!selectedNode">Frente</button>
           </div>
-
           <div class="tool-group">
             <button (click)="clearCanvas()" class="btn-standard btn-danger">Limpiar</button>
             <button (click)="saveCroquis()" class="btn-standard btn-success">Guardar JSON</button>
@@ -74,13 +69,18 @@
       <h4 class="sidebar-title">Iconos Izq</h4>
       <div class="icons-list" [class.disabled]="!selectedBackground">
         <div class="icon-item" *ngFor="let icon of leftIconos">
-          <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
+          <img [src]="'assets/iconos/' + icon" 
+               [draggable]="selectedBackground !== ''" 
+               (dragstart)="onHtmlDragStart($event, icon)" 
+               (click)="onHtmlClickAdd(icon)">
         </div>
       </div>
     </aside>
 
     <div class="stage-area">
-      <div class="stage-wrapper" #stageWrapper [class.drawing-cursor]="isDrawingMode" [class.locked]="!selectedBackground">
+      <div class="stage-wrapper" #stageWrapper 
+           [class.drawing-cursor]="isDrawingMode" 
+           [class.locked]="!selectedBackground">
         <div #stageContainer id="stage-container" (drop)="onDropToStage($event)" (dragover)="onDragOver($event)"></div>
       </div>
     </div>
@@ -89,7 +89,10 @@
       <h4 class="sidebar-title">Iconos Der</h4>
       <div class="icons-list" [class.disabled]="!selectedBackground">
         <div class="icon-item" *ngFor="let icon of rightIconos">
-          <img [src]="'assets/iconos/' + icon" draggable="true" (dragstart)="onHtmlDragStart($event, icon)" (click)="onHtmlClickAdd(icon)">
+          <img [src]="'assets/iconos/' + icon" 
+               [draggable]="selectedBackground !== ''" 
+               (dragstart)="onHtmlDragStart($event, icon)" 
+               (click)="onHtmlClickAdd(icon)">
         </div>
       </div>
     </aside>

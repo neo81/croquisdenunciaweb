@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -58,7 +58,11 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
   isBrowser = false;
   resizeObserver: ResizeObserver | null = null;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private http: HttpClient) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object, 
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
@@ -90,9 +94,8 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
 
-  // --- VALIDACIÓN DE FONDO ---
   private canInteract(): boolean {
-    if (!this.selectedBackground) {
+    if (!this.selectedBackground || this.selectedBackground === '') {
       alert("Por favor, seleccione un fondo antes de editar el canvas.");
       return false;
     }
@@ -111,7 +114,10 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.stage.add(this.backgroundLayer, this.layer);
 
     this.createTransformer();
+    this.setupStageListeners();
+  }
 
+  private setupStageListeners() {
     this.stage.on('mousedown touchstart', (e: any) => this.handleMouseDown(e));
     this.stage.on('mousemove touchmove', (e: any) => this.handleMouseMove(e));
     this.stage.on('mouseup touchend', () => this.handleMouseUp());
@@ -119,7 +125,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.stage.on('click tap', (e: any) => {
       if (this.isDrawingMode) return;
       const target = e.target;
-      if (target === this.stage || target === this.backgroundImageNode) {
+      if (target === this.stage || target.parent === this.backgroundLayer) {
         this.selectNode(null);
         return;
       }
@@ -138,13 +144,114 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.layer.add(this.transformer);
   }
 
+  public saveCroquis() {
+    // 1. Convertimos el stage a objeto plano
+    const stageObj = this.stage.toObject();
+    
+    // 2. Inyectamos manualmente el valor del fondo en el nodo de atributos
+    if (!stageObj.attrs) stageObj.attrs = {};
+    stageObj.attrs.customBackgroundFile = this.selectedBackground;
+    
+    // 3. Guardamos el string
+    this.savedJson = JSON.stringify(stageObj, null, 2);
+  }
+
+  public async loadCroquis() {
+    if (!this.savedJson) return;
+    try {
+      const stageData = JSON.parse(this.savedJson);
+      
+      // 1. Recuperar el fondo del objeto de atributos
+      let backgroundToRestore = '';
+      if (stageData.attrs && stageData.attrs.customBackgroundFile) {
+        backgroundToRestore = stageData.attrs.customBackgroundFile;
+      }
+
+      // 2. Actualizar Angular y el combo
+      this.selectedBackground = backgroundToRestore;
+      this.cdr.detectChanges();
+
+      // 3. Pausa técnica para sincronizar el DOM
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // 4. Reconstrucción del Stage
+      this.selectNode(null);
+      if (this.stage) this.stage.destroy();
+      this.stageContainer.nativeElement.innerHTML = '';
+      
+      this.stage = this.Konva.Node.create(stageData, this.stageContainer.nativeElement);
+      const layers = this.stage.getLayers();
+      this.backgroundLayer = layers[0];
+      this.layer = layers[1];
+
+      // 5. Restaurar imágenes (iconos y fondo)
+      const images = this.stage.find('Image');
+      images.forEach((imgNode: any) => {
+        const nativeImg = new Image();
+        nativeImg.src = imgNode.attrs.src; 
+        nativeImg.onload = () => {
+          imgNode.image(nativeImg);
+          this.stage.batchDraw();
+        };
+        if (imgNode.parent === this.backgroundLayer) {
+            this.backgroundImageNode = imgNode;
+        }
+      });
+
+      this.createTransformer();
+      this.setupStageListeners();
+      this.fitStageToWrapper();
+      
+      this.cdr.detectChanges();
+      this.stage.batchDraw();
+
+    } catch (e) { 
+      console.error(e);
+      alert("Error al cargar JSON."); 
+    }
+  }
+
+  public onSelectBackground(fileName: string) {
+    if (!this.isBrowser || !this.Konva) return;
+    
+    if (!fileName || fileName === '') { 
+      this.clearCanvas(); 
+      if (this.backgroundImageNode) { 
+        this.backgroundImageNode.destroy(); 
+        this.backgroundImageNode = null; 
+      }
+      this.backgroundLayer.draw();
+      this.selectedBackground = '';
+      return; 
+    }
+
+    const img = new Image();
+    img.src = `assets/backgrounds/${fileName}`;
+    img.onload = () => {
+      if (this.backgroundImageNode) this.backgroundImageNode.destroy();
+      this.backgroundImageNode = new this.Konva.Image({ 
+        x: 0, y: 0, image: img, width: this.BASE_WIDTH, height: this.BASE_HEIGHT, 
+        listening: true, src: img.src 
+      });
+      this.backgroundLayer.add(this.backgroundImageNode);
+      this.backgroundLayer.batchDraw();
+    };
+  }
+
+  public clearCanvas() { 
+    if (this.layer) {
+      this.layer.find('.canvas-icon').forEach((n: any) => n.destroy()); 
+      this.selectNode(null); 
+      this.layer.draw();
+    }
+  }
+
+  // --- Funciones de dibujo y texto ---
   public addText() {
     if (!this.canInteract()) return;
     const textNode = new this.Konva.Text({
-      text: 'Escribe aquí...',
-      x: 150, y: 150, fontSize: 30,
-      fontFamily: 'Arial', fill: this.strokeColor,
-      draggable: true, name: 'canvas-icon' 
+      text: 'Escribe aquí...', x: 150, y: 150, fontSize: 30,
+      fontFamily: 'Arial', fill: this.strokeColor, draggable: true, name: 'canvas-icon' 
     });
     textNode.on('dblclick dbltap', () => {
       const newText = prompt('Editar texto:', textNode.text());
@@ -160,38 +267,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     if (this.isDrawingMode) this.selectNode(null);
   }
 
-  public loadCroquis() {
-    if (!this.savedJson) return;
-    try {
-      this.selectNode(null);
-      const stageData = JSON.parse(this.savedJson);
-      if (this.stage) this.stage.destroy();
-      this.stageContainer.nativeElement.innerHTML = '';
-      this.stage = this.Konva.Node.create(stageData, this.stageContainer.nativeElement);
-      const layers = this.stage.getLayers();
-      this.backgroundLayer = layers[0];
-      this.layer = layers[1];
-
-      const images = this.stage.find('Image');
-      images.forEach((imgNode: any) => {
-        const nativeImg = new Image();
-        nativeImg.src = imgNode.attrs.src; 
-        nativeImg.onload = () => {
-          imgNode.image(nativeImg);
-          this.stage.batchDraw();
-        };
-      });
-
-      this.createTransformer();
-      this.stage.on('mousedown touchstart', (e: any) => this.handleMouseDown(e));
-      this.stage.on('mousemove touchmove', (e: any) => this.handleMouseMove(e));
-      this.stage.on('mouseup touchend', () => this.handleMouseUp());
-      this.fitStageToWrapper();
-      this.stage.batchDraw();
-    } catch (e) { alert("Error al cargar JSON."); }
-  }
-
-  private handleMouseDown(e: any) {
+  public handleMouseDown(e: any) {
     if (!this.isDrawingMode) return;
     this.isPaint = true;
     const pos = this.stage.getPointerPosition();
@@ -204,7 +280,7 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.layer.add(this.lastLine);
   }
 
-  private handleMouseMove(e: any) {
+  public handleMouseMove(e: any) {
     if (!this.isPaint || !this.isDrawingMode) return;
     const pos = this.stage.getPointerPosition();
     const transform = this.stage.getAbsoluteTransform().copy().invert();
@@ -214,45 +290,21 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     this.layer.batchDraw();
   }
 
-  private handleMouseUp() { if (this.isPaint) { this.isPaint = false; this.isDrawingMode = false; this.selectNode(this.lastLine); } }
+  public handleMouseUp() { if (this.isPaint) { this.isPaint = false; this.isDrawingMode = false; this.selectNode(this.lastLine); } }
 
   public selectNode(node: any | null) {
-    if (!node) {
-      this.selectedNode = null;
-      this.transformer.nodes([]);
-    } else {
-      this.selectedNode = node;
-      this.transformer.nodes([node]);
-      this.transformer.moveToTop();
-    }
+    if (!this.transformer) return;
+    if (!node) { this.selectedNode = null; this.transformer.nodes([]); } 
+    else { this.selectedNode = node; this.transformer.nodes([node]); this.transformer.moveToTop(); }
     this.layer.draw();
-  }
-
-  public onSelectBackground(fileName: string) {
-    if (!this.isBrowser || !this.Konva) return;
-    if (!fileName) { 
-      if (this.backgroundImageNode) { this.backgroundImageNode.destroy(); this.backgroundImageNode = null; }
-      this.backgroundLayer.draw();
-      return; 
-    }
-    const img = new Image();
-    img.src = `assets/backgrounds/${fileName}`;
-    img.onload = () => {
-      if (this.backgroundImageNode) this.backgroundImageNode.destroy();
-      this.backgroundImageNode = new this.Konva.Image({ x: 0, y: 0, image: img, width: this.BASE_WIDTH, height: this.BASE_HEIGHT, listening: true, src: img.src });
-      this.backgroundLayer.add(this.backgroundImageNode);
-      this.backgroundLayer.batchDraw();
-    };
   }
 
   public flipHorizontal() { if (this.selectedNode) { this.selectedNode.scaleX(this.selectedNode.scaleX() * -1); this.layer.draw(); } }
   public flipVertical() { if (this.selectedNode) { this.selectedNode.scaleY(this.selectedNode.scaleY() * -1); this.layer.draw(); } }
   public duplicateSelected() { if (!this.selectedNode) return; const clone = this.selectedNode.clone({ x: this.selectedNode.x() + 20, y: this.selectedNode.y() + 20 }); this.layer.add(clone); this.selectNode(clone); }
   public bringToFront() { if (this.selectedNode) { this.selectedNode.moveToTop(); this.transformer.moveToTop(); this.layer.draw(); } }
-  public clearCanvas() { this.layer.find('.canvas-icon').forEach((n: any) => n.destroy()); this.selectNode(null); }
-  public saveCroquis() { this.savedJson = JSON.stringify(this.stage.toJSON(), null, 2); }
   public exportImage() { this.selectNode(null); const link = document.createElement('a'); link.download = 'croquis.png'; link.href = this.stage.toDataURL({ pixelRatio: 2 }); link.click(); }
-
+  
   public onHtmlDragStart(evt: DragEvent, icon: string) { evt.dataTransfer?.setData('text/plain', icon); }
   public onDragOver(evt: DragEvent) { evt.preventDefault(); }
   public onDropToStage(evt: DragEvent) {
@@ -266,7 +318,6 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
     const logicPos = transform.point(pos);
     this.addIcon(icon, logicPos.x, logicPos.y);
   }
-
   public onHtmlClickAdd(icon: string) { 
     if (!this.canInteract()) return;
     this.addIcon(icon, this.BASE_WIDTH / 2, this.BASE_HEIGHT / 2); 
@@ -282,7 +333,6 @@ export class AppComponent implements AfterViewInit, OnDestroy, OnInit {
       this.selectNode(kImg);
     };
   }
-
   private setupResponsive() {
     this.resizeObserver = new ResizeObserver(() => this.fitStageToWrapper());
     this.resizeObserver.observe(this.stageWrapper.nativeElement);
