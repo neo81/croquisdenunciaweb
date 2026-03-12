@@ -1,111 +1,209 @@
+<!-- app.component.html -->
 <div class="page-root">
-  <section class="section header-section">
-    <div class="header-inner">
-      <h1 class="title">Reporte de Siniestro (Validación de Integridad)</h1>
-      
+
+  <!-- ══════════════════════════════════════════════════════════
+       HEADER — Formulario + Toolbar
+  ══════════════════════════════════════════════════════════ -->
+  <mat-card class="panel panel--header" appearance="outlined">
+    <mat-card-content>
+
+      <!-- Título -->
+      <div class="panel-title-row">
+        <span class="panel-chip">Siniestro</span>
+        <h1 class="panel-title">Reporte de Validación de Integridad</h1>
+      </div>
+
+      <!-- Combos -->
       <div class="form-grid">
-        <label>Tipo accidente
-          <select class="custom-select" [(ngModel)]="form.tipoAccidente">
-            <option value="">Seleccione</option>
-            <option *ngFor="let item of accidentesApi" [value]="item.COD_T_ACCIDENTE">{{ item.X_ACCIDENTE }}</option>
-          </select>
-        </label>
-        <label>Lugar Siniestro
-          <select class="custom-select" [(ngModel)]="form.tipoLugarSiniestro">
-            <option value="">Seleccione</option>
-            <option value="Calle">Calle</option>
-            <option value="Ruta">Ruta</option>
-          </select>
-        </label>
-        <label>Tipo Lugar
-          <select class="custom-select" [(ngModel)]="form.tipoLugar">
-            <option value="">Seleccione</option>
-            <option value="Cruce">Cruce</option>
-            <option value="Rotonda">Rotonda</option>
-          </select>
-        </label>
-        <label>Tipo colisión
-          <select class="custom-select" [(ngModel)]="form.tipoColision">
-            <option value="">Seleccione</option>
-            <option value="Choque">Choque</option>
-          </select>
-        </label>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Tipo de accidente</mat-label>
+          <mat-select [(ngModel)]="form.tipoAccidente">
+            <mat-option value="">Seleccione</mat-option>
+            <mat-option *ngFor="let item of accidentesApi" [value]="item.COD_T_ACCIDENTE">
+              {{ item.X_ACCIDENTE }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Lugar del siniestro</mat-label>
+          <mat-select [(ngModel)]="form.tipoLugarSiniestro">
+            <mat-option value="">Seleccione</mat-option>
+            <mat-option value="Calle">Calle</mat-option>
+            <mat-option value="Ruta">Ruta</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Tipo de lugar</mat-label>
+          <mat-select [(ngModel)]="form.tipoLugar">
+            <mat-option value="">Seleccione</mat-option>
+            <mat-option value="Cruce">Cruce</mat-option>
+            <mat-option value="Rotonda">Rotonda</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Tipo de colisión</mat-label>
+          <mat-select [(ngModel)]="form.tipoColision">
+            <mat-option value="">Seleccione</mat-option>
+            <mat-option value="Choque">Choque</mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </div>
 
-      <div class="controls header-controls">
-        <div class="bg-control-group">
-          <label class="bg-label">Fondo:</label>
-          <select class="custom-select bg-select" [(ngModel)]="selectedBackground" (ngModelChange)="onSelectBackground($event)">
-            <option value="">Blanco</option>
-            <option *ngFor="let bg of backgrounds" [value]="bg.file">{{ bg.label }}</option>
-          </select>
+      <mat-divider class="toolbar-divider-top"></mat-divider>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+
+        <!-- Fondo -->
+        <div class="toolbar-group">
+          <span class="toolbar-group-label">Fondo</span>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-select">
+            <mat-select
+              [(ngModel)]="selectedBackground"
+              (ngModelChange)="onSelectBackground($event)"
+              placeholder="— Blanco —"
+            >
+              <mat-option value="">— Blanco —</mat-option>
+              <mat-option *ngFor="let bg of backgrounds" [value]="bg.file">
+                {{ bg.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
-        
-        <div class="control-buttons">
-          <div class="tool-group">
-            <input type="color" [(ngModel)]="strokeColor" class="color-picker-round" [disabled]="!selectedBackground">
-            <button (click)="toggleDrawingMode()" class="btn-standard" [class.btn-active]="isDrawingMode" [disabled]="!selectedBackground">Dibujar</button>
-            <button (click)="addText()" class="btn-standard btn-info" [disabled]="!selectedBackground">Texto</button>
-          </div>
-          <div class="tool-group">
-            <button (click)="flipHorizontal()" class="btn-standard" [disabled]="!selectedNode">Flip H</button>
-            <button (click)="flipVertical()" class="btn-standard" [disabled]="!selectedNode">Flip V</button>
-            <button (click)="duplicateSelected()" class="btn-standard" [disabled]="!selectedNode">Duplicar</button>
-            <button (click)="bringToFront()" class="btn-standard" [disabled]="!selectedNode">Frente</button>
-          </div>
-          <div class="tool-group">
-            <button (click)="clearCanvas()" class="btn-standard btn-danger">Limpiar</button>
-            <button (click)="saveCroquis()" class="btn-standard btn-success">Guardar JSON</button>
-            <button (click)="loadCroquis()" class="btn-standard btn-warning">Cargar JSON</button>
-            <button (click)="exportImage()" class="btn-standard">Imagen</button>
-          </div>
+
+        <mat-divider vertical class="toolbar-vdivider"></mat-divider>
+
+        <!-- Dibujo -->
+        <div class="toolbar-group">
+          <input
+            type="color"
+            [(ngModel)]="strokeColor"
+            class="color-swatch"
+            [disabled]="!hasBackground"
+            matTooltip="Color de trazo"
+          />
+          <button
+            mat-stroked-button
+            [class.btn-drawing-active]="isDrawingMode"
+            [disabled]="!hasBackground"
+            (click)="toggleDrawingMode()"
+            matTooltip="Modo dibujo libre"
+          >
+            <mat-icon fontSet="material-icons-outlined">edit</mat-icon>
+            Dibujar
+          </button>
+          <button
+            mat-stroked-button
+            [disabled]="!hasBackground"
+            (click)="addText()"
+            matTooltip="Insertar texto"
+          >
+            <mat-icon>text_fields</mat-icon>
+            Texto
+          </button>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="section main-section">
-    <aside class="sidebar">
-      <h4 class="sidebar-title">Iconos Izq</h4>
-      <div class="icons-list" [class.disabled]="!selectedBackground">
-        <div class="icon-item" *ngFor="let icon of leftIconos">
-          <img [src]="'assets/iconos/' + icon" 
-               [draggable]="selectedBackground !== ''" 
-               (dragstart)="onHtmlDragStart($event, icon)" 
-               (click)="onHtmlClickAdd(icon)">
+        <mat-divider vertical class="toolbar-vdivider"></mat-divider>
+
+        <!-- Transformaciones -->
+        <div class="toolbar-group">
+          <button mat-icon-button [disabled]="!selectedNode" (click)="flipHorizontal()" matTooltip="Voltear horizontal">
+            <mat-icon>flip</mat-icon>
+          </button>
+          <button mat-icon-button [disabled]="!selectedNode" (click)="flipVertical()" matTooltip="Voltear vertical" class="icon-rotate90">
+            <mat-icon>flip</mat-icon>
+          </button>
+          <button mat-stroked-button [disabled]="!selectedNode" (click)="duplicateSelected()" matTooltip="Duplicar elemento">
+            <mat-icon>content_copy</mat-icon>
+            Duplicar
+          </button>
+          <button mat-stroked-button [disabled]="!selectedNode" (click)="bringToFront()" matTooltip="Traer al frente">
+            <mat-icon>flip_to_front</mat-icon>
+            Frente
+          </button>
         </div>
-      </div>
-    </aside>
 
-    <div class="stage-area">
-      <div class="stage-wrapper" #stageWrapper 
-           [class.drawing-cursor]="isDrawingMode" 
-           [class.locked]="!selectedBackground">
-        <div #stageContainer id="stage-container" (drop)="onDropToStage($event)" (dragover)="onDragOver($event)"></div>
-      </div>
-    </div>
+        <mat-divider vertical class="toolbar-vdivider"></mat-divider>
 
-    <aside class="sidebar">
-      <h4 class="sidebar-title">Iconos Der</h4>
-      <div class="icons-list" [class.disabled]="!selectedBackground">
-        <div class="icon-item" *ngFor="let icon of rightIconos">
-          <img [src]="'assets/iconos/' + icon" 
-               [draggable]="selectedBackground !== ''" 
-               (dragstart)="onHtmlDragStart($event, icon)" 
-               (click)="onHtmlClickAdd(icon)">
+        <!-- Acciones -->
+        <div class="toolbar-group">
+          <button mat-stroked-button color="warn" (click)="clearCanvas()" matTooltip="Limpiar canvas">
+            <mat-icon>delete_outline</mat-icon>
+            Limpiar
+          </button>
+          <button mat-flat-button color="primary" (click)="saveCroquis()" matTooltip="Guardar croquis como JSON">
+            <mat-icon>save</mat-icon>
+            Guardar JSON
+          </button>
+          <button mat-stroked-button (click)="loadCroquis()" matTooltip="Cargar croquis desde JSON">
+            <mat-icon>upload</mat-icon>
+            Cargar JSON
+          </button>
+          <button mat-stroked-button (click)="exportImage()" matTooltip="Exportar como imagen PNG">
+            <mat-icon>image</mat-icon>
+            Imagen
+          </button>
         </div>
-      </div>
-    </aside>
-  </section>
 
-  <section class="section footer-section">
-    <div class="textarea-container">
-      <label class="textarea-label">Descripción</label>
-      <textarea [(ngModel)]="form.descripcion" rows="3"></textarea>
-    </div>
-    <div class="textarea-container" style="margin-top: 10px;">
-      <label class="textarea-label">JSON Data</label>
-      <textarea [(ngModel)]="savedJson" rows="3"></textarea>
-    </div>
-  </section>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CANVAS EDITOR
+  ══════════════════════════════════════════════════════════ -->
+  <mat-card class="panel panel--canvas" appearance="outlined">
+    <mat-card-content class="canvas-card-content">
+      <app-canvas-editor
+        #canvasEditor
+        [(savedJson)]="savedJson"
+        [strokeColor]="strokeColor"
+        [backgroundFile]="selectedBackground"
+      ></app-canvas-editor>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FOOTER — Textareas
+  ══════════════════════════════════════════════════════════ -->
+  <mat-card class="panel panel--footer" appearance="outlined">
+    <mat-card-content>
+      <div class="textarea-row">
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="textarea-field">
+          <mat-label>
+            <mat-icon class="label-icon">chat_bubble_outline</mat-icon>
+            Descripción del siniestro
+          </mat-label>
+          <textarea
+            matInput
+            [(ngModel)]="form.descripcion"
+            rows="3"
+            placeholder="Describa las circunstancias del siniestro..."
+          ></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="textarea-field">
+          <mat-label>
+            <mat-icon class="label-icon">code</mat-icon>
+            Datos JSON del croquis
+          </mat-label>
+          <textarea
+            matInput
+            [(ngModel)]="savedJson"
+            rows="3"
+            class="textarea-mono"
+            placeholder='Pegue JSON aquí o presione "Guardar JSON"...'
+          ></textarea>
+        </mat-form-field>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
+
 </div>
