@@ -1,0 +1,157 @@
+/* canvas-editor/canvas-editor.component.css — Material version */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ── Shell ───────────────────────────────────────────────────── */
+.editor-shell {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* ── Sidebars (mat-card) ─────────────────────────────────────── */
+.sidebar {
+  flex: 0 0 110px !important;
+  border-radius: 8px !important;
+  border-color: #cfd8e3 !important;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 8px !important;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8fa0b0;
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eef1f4;
+}
+
+/* ── Grid de iconos ──────────────────────────────────────────── */
+.icons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  flex: 1;
+}
+
+.icons-grid--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(0.8);
+}
+
+.icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1px solid #e8edf2;
+  background: #f8fafc;
+  cursor: grab;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  user-select: none;
+}
+
+.icon-tile:hover {
+  background: #e8f0fb;
+  border-color: #90b8e0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.12);
+}
+
+.icon-tile:active {
+  transform: translateY(0);
+  cursor: grabbing;
+}
+
+.icon-tile img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.icon-label {
+  font-size: 10px;
+  color: #6b7f8e;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Área del canvas ─────────────────────────────────────────── */
+.stage-area {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.stage-wrapper {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #c5cdd6;
+  border-radius: 6px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.stage-wrapper--locked {
+  background: #f4f7fa;
+  border-color: #dce3ea;
+}
+
+.stage-wrapper--drawing {
+  cursor: crosshair;
+}
+
+#stage-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+/* ── Placeholder ─────────────────────────────────────────────── */
+.stage-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.placeholder-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #aab8c5;
+}
+
+.placeholder-inner svg { opacity: 0.45; }
+
+.placeholder-inner p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}

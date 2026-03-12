@@ -1,0 +1,75 @@
+/* styles.scss
+   Tema Angular Material personalizado para la app de siniestros.
+   Reemplazá el contenido de tu src/styles.scss (o styles.css) con esto.
+   ----------------------------------------------------------------
+   IMPORTANTE: si tu proyecto usa styles.css en lugar de styles.scss
+   debés renombrar el archivo a styles.scss y actualizar angular.json:
+     "styles": ["src/styles.scss"]
+*/
+
+@use '@angular/material' as mat;
+
+// ── Incluir los estilos base de Material (obligatorio, una sola vez) ──
+@include mat.core();
+
+// ── Paleta personalizada: azul profundo + accent slate ───────────────
+$siniestro-primary: mat.m2-define-palette(mat.$m2-blue-palette, 800, 600, 900);
+$siniestro-accent:  mat.m2-define-palette(mat.$m2-blue-grey-palette, 600, 400, 800);
+$siniestro-warn:    mat.m2-define-palette(mat.$m2-red-palette, 700);
+
+$siniestro-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $siniestro-primary,
+    accent:  $siniestro-accent,
+    warn:    $siniestro-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: "'Segoe UI', system-ui, -apple-system, sans-serif",
+    $body-1:      mat.m2-define-typography-level(13px, 1.5, 400),
+    $body-2:      mat.m2-define-typography-level(13px, 1.5, 500),
+    $button:      mat.m2-define-typography-level(12px, 1, 500),
+  ),
+  density: -1,
+));
+
+// ── Aplicar el tema ───────────────────────────────────────────────────
+@include mat.all-component-themes($siniestro-theme);
+
+// ── Reset y base global ───────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #eceff4;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: #1a2633;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Ajuste de densidad: mat-form-field más compacto ───────────────────
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-label-text-size: 13px;
+  --mdc-outlined-text-field-input-text-size: 13px;
+}
+
+// ── mat-select panel: texto de opciones en 13px ───────────────────────
+.mat-mdc-option {
+  font-size: 13px !important;
+  min-height: 36px !important;
+}
+
+// ── mat-card: sin sombra excesiva en outlined ─────────────────────────
+.mat-mdc-card.mdc-card--outlined {
+  box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 1px 8px rgba(0,0,0,.03) !important;
+}
+
+// ── Scrollbar sutil en textareas ──────────────────────────────────────
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: #c5d0da transparent;
+}
