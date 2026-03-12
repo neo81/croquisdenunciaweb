@@ -1,0 +1,70 @@
+<!-- canvas-editor/canvas-editor.component.html -->
+
+<div class="editor-shell">
+
+  <!-- ── Sidebar izquierdo ── -->
+  <aside class="sidebar sidebar--left">
+    <span class="sidebar-label">Vehículos</span>
+    <div class="icons-grid" [class.icons-grid--disabled]="!hasBackground">
+      <div
+        class="icon-tile"
+        *ngFor="let icon of leftIcons"
+        [title]="icon.label"
+        [draggable]="hasBackground"
+        (dragstart)="onHtmlDragStart($event, icon.file)"
+        (click)="onIconClick(icon.file)"
+      >
+        <img [src]="'assets/iconos/' + icon.file" [alt]="icon.label" />
+        <span class="icon-label">{{ icon.label }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Canvas central ── -->
+  <div class="stage-area">
+    <div
+      class="stage-wrapper"
+      #stageWrapper
+      [class.stage-wrapper--locked]="!hasBackground"
+      [class.stage-wrapper--drawing]="isDrawingMode"
+    >
+      <div
+        #stageContainer
+        id="stage-container"
+        (drop)="onDropToStage($event)"
+        (dragover)="onDragOver($event)"
+      ></div>
+
+      <!-- Overlay cuando no hay fondo seleccionado -->
+      <div class="stage-placeholder" *ngIf="!hasBackground">
+        <div class="placeholder-inner">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9l4-4 4 4 4-5 4 5"/>
+            <circle cx="8.5" cy="6.5" r="1"/>
+          </svg>
+          <p>Seleccione un fondo para comenzar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Sidebar derecho ── -->
+  <aside class="sidebar sidebar--right">
+    <span class="sidebar-label">Elementos</span>
+    <div class="icons-grid" [class.icons-grid--disabled]="!hasBackground">
+      <div
+        class="icon-tile"
+        *ngFor="let icon of rightIcons"
+        [title]="icon.label"
+        [draggable]="hasBackground"
+        (dragstart)="onHtmlDragStart($event, icon.file)"
+        (click)="onIconClick(icon.file)"
+      >
+        <img [src]="'assets/iconos/' + icon.file" [alt]="icon.label" />
+        <span class="icon-label">{{ icon.label }}</span>
+      </div>
+    </div>
+  </aside>
+
+</div>

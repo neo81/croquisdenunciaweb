@@ -1,0 +1,155 @@
+/* canvas-editor/canvas-editor.component.css */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ── Shell principal (sidebars + canvas) ── */
+.editor-shell {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* ── Sidebars ── */
+.sidebar {
+  flex: 0 0 110px;
+  background: #ffffff;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8fa0b0;
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.icons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  flex: 1;
+}
+
+.icons-grid--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(0.8);
+}
+
+.icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1px solid #e8edf1;
+  background: #f9fafb;
+  cursor: grab;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  user-select: none;
+}
+
+.icon-tile:hover {
+  background: #eef4fb;
+  border-color: #b3cde8;
+  transform: translateY(-1px);
+}
+
+.icon-tile:active {
+  transform: translateY(0);
+  cursor: grabbing;
+}
+
+.icon-tile img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.icon-label {
+  font-size: 10px;
+  color: #6b7f8e;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Área del canvas ── */
+.stage-area {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.stage-wrapper {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #c5cdd6;
+  border-radius: 6px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.stage-wrapper--locked {
+  background: #f4f6f8;
+  border-color: #dce3ea;
+}
+
+.stage-wrapper--drawing {
+  cursor: crosshair;
+}
+
+#stage-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Placeholder (sin fondo) ── */
+.stage-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.placeholder-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #aab8c5;
+}
+
+.placeholder-inner svg {
+  opacity: 0.5;
+}
+
+.placeholder-inner p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
