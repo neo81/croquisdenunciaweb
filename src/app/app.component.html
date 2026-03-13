@@ -9,8 +9,7 @@
 
       <!-- Título -->
       <div class="panel-title-row">
-        <span class="panel-chip">Siniestro</span>
-        <h1 class="panel-title">Reporte de Validación de Integridad</h1>
+        <h1 class="panel-title">Denuncia de Siniestros</h1>
       </div>
 
       <!-- Combos -->
@@ -88,66 +87,38 @@
             matTooltip="Color de trazo"
           />
           <button
-            mat-stroked-button
+            mat-flat-button color="primary"
             [class.btn-drawing-active]="isDrawingMode"
             [disabled]="!hasBackground"
             (click)="toggleDrawingMode()"
             matTooltip="Modo dibujo libre"
-          >
-            <mat-icon fontSet="material-icons-outlined">edit</mat-icon>
-            Dibujar
-          </button>
+          >Dibujar</button>
           <button
-            mat-stroked-button
+            mat-flat-button color="primary"
             [disabled]="!hasBackground"
             (click)="addText()"
             matTooltip="Insertar texto"
-          >
-            <mat-icon>text_fields</mat-icon>
-            Texto
-          </button>
+          >Texto</button>
         </div>
 
         <mat-divider vertical class="toolbar-vdivider"></mat-divider>
 
         <!-- Transformaciones -->
         <div class="toolbar-group">
-          <button mat-icon-button [disabled]="!selectedNode" (click)="flipHorizontal()" matTooltip="Voltear horizontal">
-            <mat-icon>flip</mat-icon>
-          </button>
-          <button mat-icon-button [disabled]="!selectedNode" (click)="flipVertical()" matTooltip="Voltear vertical" class="icon-rotate90">
-            <mat-icon>flip</mat-icon>
-          </button>
-          <button mat-stroked-button [disabled]="!selectedNode" (click)="duplicateSelected()" matTooltip="Duplicar elemento">
-            <mat-icon>content_copy</mat-icon>
-            Duplicar
-          </button>
-          <button mat-stroked-button [disabled]="!selectedNode" (click)="bringToFront()" matTooltip="Traer al frente">
-            <mat-icon>flip_to_front</mat-icon>
-            Frente
-          </button>
+          <button mat-flat-button color="primary" [disabled]="!selectedNode" (click)="flipHorizontal()" matTooltip="Voltear horizontal">Flip H</button>
+          <button mat-flat-button color="primary" [disabled]="!selectedNode" (click)="flipVertical()" matTooltip="Voltear vertical">Flip V</button>
+          <button mat-flat-button color="primary" [disabled]="!selectedNode" (click)="duplicateSelected()" matTooltip="Duplicar elemento">Duplicar</button>
+          <button mat-flat-button color="primary" [disabled]="!selectedNode" (click)="bringToFront()" matTooltip="Traer al frente">Frente</button>
         </div>
 
         <mat-divider vertical class="toolbar-vdivider"></mat-divider>
 
         <!-- Acciones -->
         <div class="toolbar-group">
-          <button mat-stroked-button color="warn" (click)="clearCanvas()" matTooltip="Limpiar canvas">
-            <mat-icon>delete_outline</mat-icon>
-            Limpiar
-          </button>
-          <button mat-flat-button color="primary" (click)="saveCroquis()" matTooltip="Guardar croquis como JSON">
-            <mat-icon>save</mat-icon>
-            Guardar JSON
-          </button>
-          <button mat-stroked-button (click)="loadCroquis()" matTooltip="Cargar croquis desde JSON">
-            <mat-icon>upload</mat-icon>
-            Cargar JSON
-          </button>
-          <button mat-stroked-button (click)="exportImage()" matTooltip="Exportar como imagen PNG">
-            <mat-icon>image</mat-icon>
-            Imagen
-          </button>
+          <button mat-flat-button color="primary" (click)="clearCanvas()" matTooltip="Limpiar canvas">Limpiar</button>
+          <button mat-flat-button color="primary" (click)="saveCroquis()" matTooltip="Guardar croquis como JSON">Guardar JSON</button>
+          <button mat-flat-button color="primary" (click)="loadCroquis()" matTooltip="Cargar croquis desde JSON">Cargar JSON</button>
+          <button mat-flat-button color="primary" (click)="exportImage()" matTooltip="Exportar como imagen PNG">Imagen</button>
         </div>
 
       </div>
@@ -164,6 +135,7 @@
         [(savedJson)]="savedJson"
         [strokeColor]="strokeColor"
         [backgroundFile]="selectedBackground"
+        (backgroundFileChange)="selectedBackground = $event"
       ></app-canvas-editor>
     </mat-card-content>
   </mat-card>

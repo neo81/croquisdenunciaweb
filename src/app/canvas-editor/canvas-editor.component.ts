@@ -41,6 +41,9 @@ export class CanvasEditorComponent implements AfterViewInit, OnDestroy, OnChange
   @Input() savedJson: string = '';
   @Output() savedJsonChange = new EventEmitter<string>();
 
+  // Notifica al padre el fondo restaurado al cargar un JSON
+  @Output() backgroundFileChange = new EventEmitter<string>();
+
   // ── ViewChildren ────────────────────────────────────────────
   @ViewChild('stageContainer', { static: true }) stageContainer!: ElementRef<HTMLDivElement>;
   @ViewChild('stageWrapper',   { static: true }) stageWrapper!:   ElementRef<HTMLDivElement>;
@@ -317,6 +320,7 @@ export class CanvasEditorComponent implements AfterViewInit, OnDestroy, OnChange
       this.setupStageListeners();
       this.fitStageToWrapper();
       this.hasBackground = !!backgroundToRestore;
+      this.backgroundFileChange.emit(backgroundToRestore); // ← sincroniza selector del padre
       this.cdr.detectChanges();
       this.stage.batchDraw();
     } catch (e) {

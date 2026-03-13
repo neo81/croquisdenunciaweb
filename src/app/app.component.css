@@ -1,10 +1,11 @@
-/* app.component.css — Angular Material version */
+/* app.component.css — Estilo alineado al sistema de siniestros */
 
 /* ── Host ────────────────────────────────────────────────────── */
 :host {
   display: block;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #eceff4;
+  /* Fondo azul muy claro del sistema */
+  background: #e4f1f8;
   padding: 16px;
   min-height: 100vh;
 }
@@ -19,17 +20,21 @@
   width: 100%;
 }
 
-/* ── Panels (mat-card overrides) ─────────────────────────────── */
+/* ── Panel base ──────────────────────────────────────────────── */
+/* Cards blancas con borde superior azul cyan, sin sombra — igual al sistema */
 .panel {
-  border-radius: 10px !important;
-  border-color: #cfd8e3 !important;
+  border-radius: 4px !important;
+  border: 1px solid #c8dce8 !important;
+  border-top: 3px solid #1aaee0 !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
 }
 
 .panel--header mat-card-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 16px 20px 14px !important;
+  padding: 20px 20px 16px !important;
 }
 
 .panel--canvas mat-card-content,
@@ -38,57 +43,51 @@
 }
 
 .panel--footer mat-card-content {
-  padding: 14px 16px !important;
+  padding: 16px 20px !important;
 }
 
-/* ── Título del panel ────────────────────────────────────────── */
+/* ── Título del panel — texto plano, sin chip ────────────────── */
 .panel-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-bottom: 4px;
 }
 
+/* El chip queda oculto — el estilo del sistema usa solo texto */
 .panel-chip {
-  background: #1565c0;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
+  display: none;
 }
 
 .panel-title {
   margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a2633;
-  letter-spacing: -0.01em;
+  font-size: 20px;
+  font-weight: 400;
+  color: #0d1f2d;       /* más oscuro que antes */
+  letter-spacing: 0;
 }
 
 /* ── Form grid (4 combos) ────────────────────────────────────── */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 14px;
 }
 
-/* Reducir tamaño de fuente en labels y opciones de mat-select */
 .form-grid mat-form-field {
   font-size: 13px;
 }
 
 /* ── Divisores de toolbar ────────────────────────────────────── */
 .toolbar-divider-top {
-  margin: 4px 0 !important;
+  margin: 2px 0 4px !important;
+  border-color: #dceaf2 !important;
 }
 
 .toolbar-vdivider {
-  height: 28px !important;
-  margin: 0 6px !important;
-  border-color: #cfd8e3 !important;
+  height: 26px !important;
+  margin: 0 8px !important;
+  border-color: #c8dce8 !important;
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────── */
@@ -97,88 +96,85 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 .toolbar-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 
 .toolbar-group-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #8fa0b0;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b8898;
   white-space: nowrap;
 }
 
-/* mat-form-field compacto para el selector de fondo */
+/* Selector de fondo */
 .toolbar-select {
-  width: 160px;
+  width: 165px;
   font-size: 13px;
 }
 
-/* ── Botones de toolbar: altura 32px + bordes rectangulares ──── */
-.toolbar button.mat-mdc-button,
-.toolbar button.mat-mdc-outlined-button,
-.toolbar button.mat-mdc-unelevated-button,
-.toolbar button.mat-mdc-icon-button {
-  height: 32px;
-  font-size: 12px;
-  line-height: 32px;
-  padding: 0 10px;
+/* ── Botones de toolbar ──────────────────────────────────────────
+   ::ng-deep necesario para atravesar la encapsulación de Material  */
+
+/* Dimensiones y forma */
+:host ::ng-deep .toolbar button.mat-mdc-unelevated-button,
+:host ::ng-deep .toolbar button.mat-mdc-outlined-button,
+:host ::ng-deep .toolbar button.mat-mdc-button {
+  height: 36px;
+  min-width: unset;
+  padding: 0 14px;
+  border-radius: 4px !important;
+  letter-spacing: 0.01em;
+}
+
+/* Fondo #219CDC forzado en el elemento raíz del botón */
+:host ::ng-deep .toolbar button.mat-mdc-unelevated-button.mat-primary {
+  background-color: #219CDC !important;
+}
+:host ::ng-deep .toolbar button.mat-mdc-unelevated-button.mat-primary:hover:not([disabled]) {
+  background-color: #1a87bb !important;
+}
+:host ::ng-deep .toolbar button.mat-mdc-unelevated-button.mat-primary:disabled {
+  background-color: #219CDC !important;
+  opacity: 0.4;
+}
+
+/* Texto blanco, Segoe UI, weight 600 */
+:host ::ng-deep .toolbar button.mat-mdc-unelevated-button.mat-primary .mdc-button__label {
+  color: #ffffff !important;
+  font-family: 'Segoe UI', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/* Ripple radius */
+:host ::ng-deep .toolbar button .mdc-button__ripple,
+:host ::ng-deep .toolbar button .mat-mdc-button-ripple,
+:host ::ng-deep .toolbar button .mat-mdc-focus-indicator {
   border-radius: 4px !important;
 }
 
-/* MDC aplica el radius también en el elemento interno del ripple */
-.toolbar button .mdc-button__ripple,
-.toolbar button .mat-mdc-button-ripple,
-.toolbar button .mat-mdc-focus-indicator {
-  border-radius: 4px !important;
-}
-
-.toolbar button.mat-mdc-icon-button {
-  width: 32px;
-  padding: 0;
-  border-radius: 4px !important;
-}
-
-/* Ícono dentro de botones de toolbar */
-.toolbar button mat-icon {
-  font-size: 16px;
-  height: 16px;
-  width: 16px;
-  line-height: 16px;
-  margin-right: 4px;
-}
-
-.toolbar button.mat-mdc-icon-button mat-icon {
-  margin-right: 0;
-}
-
-/* Estado activo del botón Dibujar */
-.btn-drawing-active {
+/* Botón Dibujar activo — naranja */
+:host ::ng-deep .toolbar .btn-drawing-active {
   background-color: #e65100 !important;
-  color: #fff !important;
-  border-color: #bf360c !important;
 }
-
-/* Flip vertical: rotar el ícono 90° */
-.icon-rotate90 mat-icon {
-  transform: rotate(90deg);
+:host ::ng-deep .toolbar .btn-drawing-active .mdc-button__label {
+  color: #fff !important;
 }
 
 /* ── Color swatch ────────────────────────────────────────────── */
 .color-swatch {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   padding: 0;
-  border: 2px solid #cfd8e3;
-  border-radius: 50%;
+  border: 1.5px solid #b8ccd8;
+  border-radius: 4px;           /* rectangular como los botones */
   cursor: pointer;
   background: none;
   appearance: none;
@@ -187,16 +183,16 @@
   flex-shrink: 0;
   transition: border-color 0.15s;
 }
-.color-swatch:hover:not(:disabled) { border-color: #1565c0; }
-.color-swatch:disabled              { opacity: 0.4; cursor: not-allowed; }
+.color-swatch:hover:not(:disabled) { border-color: #1aaee0; }
+.color-swatch:disabled             { opacity: 0.4; cursor: not-allowed; }
 .color-swatch::-webkit-color-swatch-wrapper { padding: 0; }
-.color-swatch::-webkit-color-swatch { border: none; border-radius: 50%; }
+.color-swatch::-webkit-color-swatch        { border: none; border-radius: 2px; }
 
 /* ── Footer textareas ────────────────────────────────────────── */
 .textarea-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 
 .textarea-field {
@@ -217,14 +213,32 @@
   margin-right: 3px;
 }
 
-/* ── mat-form-field global density ──────────────────────────── */
-/* Reducir padding interno para que los fields sean más compactos */
+/* ── mat-form-field: campos más altos, borde #E0E0E0 ────────────── */
 :host ::ng-deep .mat-mdc-form-field-infix {
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
   min-height: unset !important;
 }
 
 :host ::ng-deep .mat-mdc-text-field-wrapper {
-  padding: 0 10px !important;
+  padding: 0 12px !important;
+}
+
+/* Borde de los fields explícitamente en #E0E0E0 */
+:host ::ng-deep .mdc-notched-outline__leading,
+:host ::ng-deep .mdc-notched-outline__notch,
+:host ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #E0E0E0 !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__leading,
+:host ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__notch,
+:host ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+  border-color: #219CDC !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+:host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+:host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #219CDC !important;
 }
